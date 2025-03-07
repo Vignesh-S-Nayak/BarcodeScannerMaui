@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:zxing="clr-namespace:ZXing.Net.Maui.Controls;assembly=ZXing.Net.MAUI.Controls"
+             x:Class="BarcodeScannerMaui.Views.CameraPage"
+             Title="Scan Barcode"
+             BackgroundColor="Black">
+
+    <Grid>
+        <!-- Full screen scanner (will be partially covered) -->
+        <zxing:CameraBarcodeReaderView x:Name="scannerView"
+                                      IsDetecting="True"
+                                      IsTorchOn="False"
+                                      BarcodesDetected="OnBarcodesDetected"
+                                      VerticalOptions="Fill"
+                                      HorizontalOptions="Fill" />
+
+        <!-- Semi-transparent overlay with cutout for scanning window -->
+        <Grid x:Name="overlayGrid">
+            <!-- Top overlay -->
+            <BoxView Color="#80000000" 
+                     VerticalOptions="Start" 
+                     HorizontalOptions="Fill"
+                     HeightRequest="{Binding TopOverlayHeight}"/>
+
+            <!-- Bottom overlay -->
+            <BoxView Color="#80000000" 
+                     VerticalOptions="End" 
+                     HorizontalOptions="Fill"
+                     HeightRequest="{Binding BottomOverlayHeight}"/>
+
+            <!-- Left overlay -->
+            <BoxView Color="#80000000" 
+                     VerticalOptions="Center" 
+                     HorizontalOptions="Start"
+                     HeightRequest="{Binding ScanWindowSize}"
+                     WidthRequest="{Binding SideOverlayWidth}"/>
+
+            <!-- Right overlay -->
+            <BoxView Color="#80000000" 
+                     VerticalOptions="Center" 
+                     HorizontalOptions="End"
+                     HeightRequest="{Binding ScanWindowSize}"
+                     WidthRequest="{Binding SideOverlayWidth}"/>
+
+            <!-- Scanning window frame -->
+            <Border x:Name="scanFrame" 
+                   BackgroundColor="Transparent"
+                   Stroke="#FF0000"
+                   StrokeThickness="2"
+                   VerticalOptions="Center"
+                   HorizontalOptions="Center"
+                   WidthRequest="{Binding ScanWindowSize}"
+                   HeightRequest="{Binding ScanWindowSize}">
+
+                <!-- Horizontal red scanning line -->
+                <BoxView x:Name="scanLine"
+                         BackgroundColor="#FF0000"
+                         HeightRequest="2"
+                         HorizontalOptions="Fill"
+                         VerticalOptions="Center"/>
+            </Border>
+
+            <!-- Scanning instruction -->
+            <Label Text="Position barcode within the square"
+                   TextColor="White"
+                   FontSize="16"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Start"
+                   Margin="0,50,0,0"/>
+
+            <!-- Tap to refocus instruction -->
+            <Label Text="Tap inside box to focus"
+                   TextColor="White"
+                   FontSize="12"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Start"
+                   Margin="0,80,0,0"/>
+        </Grid>
+
+        <!-- Bottom buttons -->
+        <StackLayout Orientation="Horizontal"
+                     VerticalOptions="End"
+                     HorizontalOptions="Center"
+                     Margin="0,0,0,30"
+                     Spacing="10">
+
+            <Button Text="Cancel" 
+                    Clicked="OnCancelClicked"
+                    BackgroundColor="#2196F3" 
+                    TextColor="White"
+                    MinimumWidthRequest="120" />
+
+            <Button Text="Manual Entry" 
+                    Clicked="OnManualEntryClicked"
+                    BackgroundColor="#FFA000" 
+                    TextColor="White"
+                    MinimumWidthRequest="120" />
+        </StackLayout>
+    </Grid>
+</ContentPage>

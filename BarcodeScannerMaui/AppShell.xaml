@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+       xmlns:local="clr-namespace:BarcodeScannerMaui.Views"
+       x:Class="BarcodeScannerMaui.AppShell"
+       BackgroundColor="White"
+       TitleColor="Black"
+       ForegroundColor="Black"
+       TabBarBackgroundColor="White"
+       TabBarForegroundColor="Black"
+       TabBarTitleColor="Black"
+       TabBarUnselectedColor="Gray">
+
+    <TabBar>
+        <ShellContent Title="Scan" 
+                      Icon="scan.png" 
+                      Route="scan" 
+                      ContentTemplate="{DataTemplate local:ScanPage}" />
+        <ShellContent Title="Scanned Items" 
+                      Icon="cart.png" 
+                      Route="items" 
+                      ContentTemplate="{DataTemplate local:ItemsPage}" />
+    </TabBar>
+</Shell>

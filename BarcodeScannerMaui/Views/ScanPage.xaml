@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="BarcodeScannerMaui.Views.ScanPage"
+             Title="Scan"
+             BackgroundColor="White">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Logout" Clicked="OnLogoutClicked" Order="Primary" Priority="0" />
+    </ContentPage.ToolbarItems>
+
+    <StackLayout VerticalOptions="CenterAndExpand" 
+                 HorizontalOptions="CenterAndExpand" 
+                 Spacing="20">
+        <Image Source="scan.png" 
+               WidthRequest="100" 
+               HeightRequest="100" />
+        <Button Text="Start Scanning" 
+                Clicked="OnScanButtonClicked"
+                BackgroundColor="#2196F3" 
+                TextColor="White" />
+    </StackLayout>
+</ContentPage>

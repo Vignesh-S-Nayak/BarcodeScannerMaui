@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:BarcodeScannerMaui.ViewModels"
+             x:Class="BarcodeScannerMaui.Views.ItemsPage"
+             Title="{Binding Title}"
+             BackgroundColor="White">
+
+    <ContentPage.BindingContext>
+        <viewmodels:ItemsViewModel />
+    </ContentPage.BindingContext>
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Clear" Command="{Binding ClearCommand}" Order="Primary" Priority="0" />
+    </ContentPage.ToolbarItems>
+
+    <StackLayout Padding="10">
+        <CollectionView x:Name="itemsCollection" 
+                      ItemsSource="{Binding Items}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Padding="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackLayout Grid.Column="0" Spacing="2">
+                            <Label Text="{Binding Name}" FontSize="Medium" TextColor="Black" />
+                            <Label Text="{Binding Barcode}" FontSize="Small" TextColor="Gray" />
+                            <Label Text="{Binding Quantity, StringFormat='Quantity: {0}'}" FontSize="Small" TextColor="Black" />
+                        </StackLayout>
+                        <Button Grid.Column="1" 
+                                Text="Remove" 
+                                BackgroundColor="Orange" 
+                                TextColor="White" 
+                                Clicked="OnRemoveItemClicked"
+                                CommandParameter="{Binding Barcode}" />
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+            <CollectionView.EmptyView>
+                <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
+                    <Label Text="No items scanned yet" TextColor="Gray" FontSize="Medium" />
+                </StackLayout>
+            </CollectionView.EmptyView>
+        </CollectionView>
+    </StackLayout>
+</ContentPage>
