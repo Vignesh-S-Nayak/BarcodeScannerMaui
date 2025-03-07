@@ -3,12 +3,12 @@
        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
        xmlns:local="clr-namespace:BarcodeScannerMaui.Views"
        x:Class="BarcodeScannerMaui.AppShell"
-       BackgroundColor="White"
-       TitleColor="Black"
-       ForegroundColor="Black"
-       TabBarBackgroundColor="White"
-       TabBarForegroundColor="Black"
-       TabBarTitleColor="Black"
+       BackgroundColor="#F3E8FF"
+       TitleColor="#6B46C1"
+       ForegroundColor="#6B46C1"
+       TabBarBackgroundColor="#F3E8FF"
+       TabBarForegroundColor="#6B46C1"
+       TabBarTitleColor="#6B46C1"
        TabBarUnselectedColor="Gray">
 
     <TabBar>
@@ -16,7 +16,7 @@
                       Icon="scan.png" 
                       Route="scan" 
                       ContentTemplate="{DataTemplate local:ScanPage}" />
-        <ShellContent Title="Scanned Items" 
+        <ShellContent Title="Items" 
                       Icon="cart.png" 
                       Route="items" 
                       ContentTemplate="{DataTemplate local:ItemsPage}" />

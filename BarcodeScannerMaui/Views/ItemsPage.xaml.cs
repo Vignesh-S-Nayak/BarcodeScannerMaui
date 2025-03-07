@@ -10,12 +10,26 @@ namespace BarcodeScannerMaui.Views
         {
             InitializeComponent();
             BindingContext = _viewModel = new ItemsViewModel();
+
+            
+            Shell.SetBackButtonBehavior(this, new BackButtonBehavior
+            {
+                Command = new Command(() => Shell.Current.GoToAsync("//scan")),
+                IsEnabled = true
+            });
         }
 
         protected override async void OnAppearing()
         {
             base.OnAppearing();
             await _viewModel.OnAppearing();
+        }
+
+        protected override bool OnBackButtonPressed()
+        {
+            
+            Shell.Current.GoToAsync("//scan");
+            return true; 
         }
 
         private async void OnRemoveItemClicked(object sender, EventArgs e)
@@ -29,6 +43,12 @@ namespace BarcodeScannerMaui.Views
                     await _viewModel.RemoveItem(barcode);
                 }
             }
+        }
+
+       
+        private void OnScanItemsClicked(object sender, EventArgs e)
+        {
+            Shell.Current.GoToAsync("//scan");
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using ZXing.Net.Maui;
 using BarcodeScannerMaui.Services;
+using System.Timers;
 
 namespace BarcodeScannerMaui.Views
 {
@@ -9,7 +10,11 @@ namespace BarcodeScannerMaui.Views
         private bool isScanLineAnimating = false;
         private CancellationTokenSource animationCancellationTokenSource;
 
-        // Properties for layout calculations
+       
+        private System.Timers.Timer autoCloseTimer;
+        private const int AUTO_CLOSE_TIMEOUT = 20000; 
+
+      
         public double ScanWindowSize { get; private set; } = 250;
         public double TopOverlayHeight { get; private set; }
         public double BottomOverlayHeight { get; private set; }
@@ -20,20 +25,59 @@ namespace BarcodeScannerMaui.Views
             InitializeComponent();
             overlayGrid.BindingContext = this;
 
-            // Add tap-to-focus capability
+           
             var tapGesture = new TapGestureRecognizer();
             tapGesture.Tapped += OnScanAreaTapped;
             scanFrame.GestureRecognizers.Add(tapGesture);
+
+            
+            SetupAutoCloseTimer();
+        }
+
+        private void SetupAutoCloseTimer()
+        {
+            
+            autoCloseTimer = new System.Timers.Timer(AUTO_CLOSE_TIMEOUT);
+            autoCloseTimer.AutoReset = false; 
+            autoCloseTimer.Elapsed += AutoCloseTimerElapsed;
+        }
+
+        private void AutoCloseTimerElapsed(object sender, ElapsedEventArgs e)
+        {
+            
+            MainThread.BeginInvokeOnMainThread(async () =>
+            {
+                if (!isProcessing) 
+                {
+                   
+                    await DisplayAlert("Scanner Timeout", "Scanner closed due to inactivity.", "OK");
+
+                    
+                    scannerView.IsDetecting = false;
+                    StopScanLineAnimation();
+                    await Navigation.PopModalAsync();
+                }
+            });
+        }
+
+        
+        private void ResetAutoCloseTimer()
+        {
+            autoCloseTimer.Stop();
+            autoCloseTimer.Start();
         }
 
         private async void OnScanAreaTapped(object sender, EventArgs e)
         {
             try
             {
-                // Reset detection briefly to help with focus/scan issues
+               
                 scannerView.IsDetecting = false;
                 await Task.Delay(200);
                 scannerView.IsDetecting = true;
+
+               
+                ResetAutoCloseTimer();
             }
             catch (Exception ex)
             {
@@ -41,12 +85,11 @@ namespace BarcodeScannerMaui.Views
             }
         }
 
-
         protected override async void OnAppearing()
         {
             base.OnAppearing();
 
-            // Request camera permission
+           
             var status = await Permissions.RequestAsync<Permissions.Camera>();
             if (status != PermissionStatus.Granted)
             {
@@ -55,37 +98,38 @@ namespace BarcodeScannerMaui.Views
                 return;
             }
 
-            // Ensure we're starting with a clean state
+           
             isProcessing = false;
 
             try
             {
-                // Configure the scanner with more specific options
+               
                 scannerView.Options = new BarcodeReaderOptions
                 {
-                    
-                    AutoRotate = true,  // This is important for orientation handling
+                    AutoRotate = true,  
                     Multiple = false,
-                    TryHarder = true   // Makes scanning more aggressive
+                    TryHarder = true   
                 };
 
-                // Make sure any device orientation works
+       
                 scannerView.CameraLocation = CameraLocation.Rear;
 
-                // Start the scanner with a slight delay to ensure the UI is loaded
+         
                 await Task.Delay(500);
 
-                // Stop and restart detection to apply new settings
+            
                 scannerView.IsDetecting = false;
                 await Task.Delay(100);
                 scannerView.IsDetecting = true;
 
-                // Reset and start the animation
+         
                 StopScanLineAnimation();
                 await Task.Delay(100);
                 StartScanLineAnimation();
 
-                // Add debug output
+                autoCloseTimer.Start();
+
+           
                 Console.WriteLine("Camera scanner initialized and started");
             }
             catch (Exception ex)
@@ -99,19 +143,19 @@ namespace BarcodeScannerMaui.Views
         {
             base.OnSizeAllocated(width, height);
 
-            // Calculate overlay dimensions
+       
             if (width > 0 && height > 0)
             {
-                // Make the scan window a bit smaller on smaller screens
+
                 ScanWindowSize = Math.Min(width, height) * 0.7;
 
-                // Calculate overlay dimensions
+       
                 SideOverlayWidth = (width - ScanWindowSize) / 2;
                 double centerAreaTop = (height - ScanWindowSize) / 2;
                 TopOverlayHeight = centerAreaTop;
                 BottomOverlayHeight = centerAreaTop;
 
-                // Force property change notification
+               
                 OnPropertyChanged(nameof(ScanWindowSize));
                 OnPropertyChanged(nameof(TopOverlayHeight));
                 OnPropertyChanged(nameof(BottomOverlayHeight));
@@ -126,7 +170,7 @@ namespace BarcodeScannerMaui.Views
             animationCancellationTokenSource = new CancellationTokenSource();
             isScanLineAnimating = true;
 
-            // Start the animation in a separate task
+          
             Task.Run(async () => await AnimateScanLineAsync(animationCancellationTokenSource.Token));
         }
 
@@ -145,12 +189,12 @@ namespace BarcodeScannerMaui.Views
                 {
                     await MainThread.InvokeOnMainThreadAsync(async () =>
                     {
-                        // Move from top to bottom
+                       
                         await scanLine.TranslateTo(0, -ScanWindowSize / 2 + 2, 0);
                         if (!cancellationToken.IsCancellationRequested)
                             await scanLine.TranslateTo(0, ScanWindowSize / 2 - 2, 1500, Easing.Linear);
 
-                        // Move from bottom to top
+                    
                         if (!cancellationToken.IsCancellationRequested)
                         {
                             await scanLine.TranslateTo(0, ScanWindowSize / 2 - 2, 0);
@@ -158,13 +202,13 @@ namespace BarcodeScannerMaui.Views
                         }
                     });
 
-                    // Small delay between animations
+                   
                     await Task.Delay(100, cancellationToken);
                 }
             }
             catch (TaskCanceledException)
             {
-                // Expected when cancellation occurs
+           
             }
             catch (Exception ex)
             {
@@ -183,8 +227,10 @@ namespace BarcodeScannerMaui.Views
             if (string.IsNullOrWhiteSpace(barcode.Value))
                 return;
 
-            // Prevent multiple processing of the same barcode
             isProcessing = true;
+
+   
+            autoCloseTimer.Stop();
 
             try
             {
@@ -192,19 +238,18 @@ namespace BarcodeScannerMaui.Views
                 {
                     try
                     {
-                        // Try to vibrate the device for feedback
+                        
                         if (Vibration.Default.IsSupported)
                             Vibration.Default.Vibrate(TimeSpan.FromMilliseconds(300));
                     }
-                    catch { /* Ignore vibration errors */ }
+                    catch { }
 
-                    // Stop scanning and animation
                     scannerView.IsDetecting = false;
                     StopScanLineAnimation();
 
                     Console.WriteLine($"Processing barcode: {barcode.Value}, Format: {barcode.Format}");
 
-                    // Process the result
+                    
                     await ProcessScannedBarcodeAsync(barcode.Value);
                 });
             }
@@ -212,6 +257,9 @@ namespace BarcodeScannerMaui.Views
             {
                 Console.WriteLine($"Barcode processing error: {ex.Message}");
                 isProcessing = false;
+
+                
+                autoCloseTimer.Start();
             }
         }
 
@@ -222,35 +270,38 @@ namespace BarcodeScannerMaui.Views
 
             try
             {
-                // Add or update the scanned item
+                
                 await ItemService.AddOrUpdateItem(barcode);
 
-                // Display success message
+                
                 await DisplayAlert("Success", $"Scanned barcode: {barcode}", "OK");
 
-                // Close this page and return to the scan tab, but navigate to the items tab
+       
                 await Navigation.PopModalAsync();
 
-                // Navigate to items tab
+                
                 await Shell.Current.GoToAsync("//items");
             }
             catch (Exception ex)
             {
                 await DisplayAlert("Error", $"Failed to process barcode: {ex.Message}", "OK");
-            }
-            finally
-            {
+
+               
+                autoCloseTimer.Start();
                 isProcessing = false;
             }
         }
 
         private async void OnCancelClicked(object sender, EventArgs e)
         {
-            // Stop scanning and animation
+            
+            autoCloseTimer.Stop();
+
+            
             scannerView.IsDetecting = false;
             StopScanLineAnimation();
 
-            // Go back to the scan page
+           
             await Navigation.PopModalAsync();
         }
 
@@ -258,14 +309,21 @@ namespace BarcodeScannerMaui.Views
         {
             base.OnDisappearing();
 
-            // Ensure scanner and animation are stopped when page disappears default
+            
             scannerView.IsDetecting = false;
             StopScanLineAnimation();
+
+            
+            autoCloseTimer.Stop();
+            autoCloseTimer.Dispose();
         }
 
         private async void OnManualEntryClicked(object sender, EventArgs e)
         {
-            // Stop scanning and animation while dialog is open
+            
+            autoCloseTimer.Stop();
+
+            
             scannerView.IsDetecting = false;
             StopScanLineAnimation();
 
@@ -273,16 +331,16 @@ namespace BarcodeScannerMaui.Views
 
             if (!string.IsNullOrWhiteSpace(result))
             {
-                // Process the manually entered barcode
+                
                 await ProcessScannedBarcodeAsync(result);
             }
             else
             {
-                // If canceled, restart scanning and animation
+                
                 scannerView.IsDetecting = true;
                 StartScanLineAnimation();
+                autoCloseTimer.Start();
             }
         }
-
     }
 }

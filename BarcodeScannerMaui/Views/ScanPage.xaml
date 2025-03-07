@@ -12,12 +12,34 @@
     <StackLayout VerticalOptions="CenterAndExpand" 
                  HorizontalOptions="CenterAndExpand" 
                  Spacing="20">
-        <Image Source="scan.png" 
-               WidthRequest="100" 
-               HeightRequest="100" />
-        <Button Text="Start Scanning" 
-                Clicked="OnScanButtonClicked"
-                BackgroundColor="#2196F3" 
-                TextColor="White" />
+        <Frame BackgroundColor="#F3E8FF" 
+               CornerRadius="10" 
+               Padding="40" 
+               HorizontalOptions="Center" 
+               VerticalOptions="Center"
+               HasShadow="True">
+            <StackLayout HorizontalOptions="Center" 
+                         VerticalOptions="Center">
+                <Image Source="scan.png" 
+                       HeightRequest="100" 
+                       WidthRequest="100"
+                       HorizontalOptions="Center" />
+                <Label Text="SCAN BARCODE" 
+                       FontSize="18" 
+                       TextColor="Gray" 
+                       HorizontalOptions="Center"
+                       Margin="0,20,0,20" />
+                <Button Text="Start Scanning" 
+                        Clicked="OnScanButtonClicked"
+                        BackgroundColor="#6B46C1" 
+                        TextColor="White"
+                        CornerRadius="25"
+                        HeightRequest="50"
+                        WidthRequest="200"
+                        HorizontalOptions="Center" />
+            </StackLayout>
+        </Frame>
     </StackLayout>
+
+
 </ContentPage>

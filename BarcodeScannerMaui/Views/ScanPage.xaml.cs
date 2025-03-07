@@ -11,7 +11,7 @@ namespace BarcodeScannerMaui.Views
 
         private async void OnScanButtonClicked(object sender, EventArgs e)
         {
-            // Open the camera page as a modal
+            
             await Navigation.PushModalAsync(new CameraPage());
         }
 
@@ -21,6 +21,11 @@ namespace BarcodeScannerMaui.Views
             MainThread.BeginInvokeOnMainThread(() => {
                 Application.Current.MainPage = new LoginPage();
             });
+        }
+
+        private void OnViewItemsTapped(object sender, EventArgs e)
+        {
+            Shell.Current.GoToAsync("//items");
         }
     }
 }

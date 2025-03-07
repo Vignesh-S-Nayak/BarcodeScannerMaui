@@ -14,35 +14,57 @@
         <ToolbarItem Text="Clear" Command="{Binding ClearCommand}" Order="Primary" Priority="0" />
     </ContentPage.ToolbarItems>
 
-    <StackLayout Padding="10">
-        <CollectionView x:Name="itemsCollection" 
-                      ItemsSource="{Binding Items}">
+    <Grid RowDefinitions="Auto,*">
+      <!-- Items List -->
+        <CollectionView Grid.Row="1" 
+                      x:Name="itemsListView" 
+                      ItemsSource="{Binding Items}"
+                      VerticalOptions="FillAndExpand">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <Grid Padding="10">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <StackLayout Grid.Column="0" Spacing="2">
-                            <Label Text="{Binding Name}" FontSize="Medium" TextColor="Black" />
-                            <Label Text="{Binding Barcode}" FontSize="Small" TextColor="Gray" />
-                            <Label Text="{Binding Quantity, StringFormat='Quantity: {0}'}" FontSize="Small" TextColor="Black" />
+                    <StackLayout BackgroundColor="#F3E8FF" Padding="0">
+                        <StackLayout BackgroundColor="#F3E8FF" Padding="16" Orientation="Horizontal" HorizontalOptions="FillAndExpand">
+                            <StackLayout HorizontalOptions="StartAndExpand">
+                                <Label Text="{Binding Name}" FontSize="Medium" TextColor="Black" />
+                                <Label Text="{Binding Barcode}" FontSize="Small" TextColor="Gray" />
+                            </StackLayout>
+                            <Label Text="{Binding Quantity, StringFormat='x{0}'}" 
+                                   HorizontalOptions="End" 
+                                   VerticalOptions="Center" 
+                                   FontSize="Medium"
+                                   TextColor="#6B46C1"
+                                   FontAttributes="Bold" />
+                            <Button Text="Remove" 
+                                    BackgroundColor="Transparent" 
+                                    TextColor="#6B46C1" 
+                                    BorderColor="#6B46C1"
+                                    BorderWidth="1"
+                                    CornerRadius="20"
+                                    Clicked="OnRemoveItemClicked"
+                                    CommandParameter="{Binding Barcode}" 
+                                    Margin="10,0,0,0" />
                         </StackLayout>
-                        <Button Grid.Column="1" 
-                                Text="Remove" 
-                                BackgroundColor="Orange" 
-                                TextColor="White" 
-                                Clicked="OnRemoveItemClicked"
-                                CommandParameter="{Binding Barcode}" />
-                    </Grid>
+                        <BoxView HeightRequest="1" BackgroundColor="#E5E7EB" />
+                    </StackLayout>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
             <CollectionView.EmptyView>
-                <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
-                    <Label Text="No items scanned yet" TextColor="Gray" FontSize="Medium" />
+                <StackLayout VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Spacing="20">
+                    <Image Source="empty_cart.png" 
+                           HeightRequest="100"
+                           WidthRequest="100"
+                           HorizontalOptions="Center" />
+                    <Label Text="Your cart is empty" 
+                           FontSize="20"
+                           TextColor="#6B46C1"
+                           HorizontalOptions="Center"
+                           FontAttributes="Bold" />
+                    <Label Text="Scan a barcode to add items" 
+                           FontSize="16"
+                           TextColor="Gray"
+                           HorizontalOptions="Center" />
                 </StackLayout>
             </CollectionView.EmptyView>
         </CollectionView>
-    </StackLayout>
+    </Grid>
 </ContentPage>
