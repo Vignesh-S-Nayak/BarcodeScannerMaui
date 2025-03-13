@@ -31,3 +31,10 @@ The application follows the MVVM (Model-View-ViewModel) pattern:
 - **ItemService**: Manages item data operations
 - **AuthService**: Handles authentication logic
 
+## Screenshots
+
+| Login Page | Scanner Page | Empty Cart | Items Page |
+|------------|-------------|------------|------------|
+| ![Login Page](https://github.com/user-attachments/assets/0ff12f0e-eef9-4e30-abe5-52967b028899) | ![Scanner Page](https://github.com/user-attachments/assets/5832797b-4d49-4539-af1a-5618bd067087) | ![Empty Cart](https://github.com/user-attachments/assets/2816c7df-d5de-4944-ac77-9dc905f973c9) | ![Items Page](https://github.com/user-attachments/assets/93679b64-749c-4e48-b4f5-454d3aee547f) |
+
+
